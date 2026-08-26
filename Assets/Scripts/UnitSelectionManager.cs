@@ -6,12 +6,19 @@ public class UnitSelectionManager : MonoBehaviour
 {
     private Camera mainCamera;
     [SerializeField] private SelectionBoxUI selectionBoxUI;
+    public float unitMinimumSpace = 1f;
+    private LayerMask ground;
     private TestManager testManager;
-
+    private List<UnitMovement> selectedUnit = new();
+    Vector3 targetPos;
     private void Awake()
     {
         mainCamera = Camera.main;
         testManager = GetComponent<TestManager>();
+    }
+    private void Start()
+    {
+        ground = LayerMask.GetMask("Ground");
     }
     private void Update()
     {
@@ -22,27 +29,61 @@ public class UnitSelectionManager : MonoBehaviour
         {
             SelectUnitsInBox(selectionBoxUI.GetScreenRect());
         }
+
+        if (Mouse.current.rightButton.wasPressedThisFrame)
+        {
+            Vector2 mousePos = Mouse.current.position.ReadValue();
+
+            // 1. 카메라에서 마우스 위치로 향하는 Ray 생성
+            Ray ray = mainCamera.ScreenPointToRay(mousePos);
+
+            // 2-A. 바닥 오브젝트에 Collider가 있는 경우 (Raycast 활용)
+            if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ground))
+            {
+                targetPos = hit.point;
+                targetPos = new Vector3(targetPos.x, 1, targetPos.z);
+
+                int columns = Mathf.CeilToInt(Mathf.Sqrt(selectedUnit.Count));
+                int rows = Mathf.CeilToInt((float)selectedUnit.Count / columns);
+
+                float halfWidth = (columns - 1) * unitMinimumSpace * 0.5f;
+                float halfHeight = (rows - 1) * unitMinimumSpace * 0.5f;
+                
+                for (int i = 0; i < selectedUnit.Count; i++)
+                {
+                    int row = i / columns;
+                    int col = i % columns;
+
+                    Vector3 offset = new Vector3((
+                        col * unitMinimumSpace) - halfWidth,
+                        0,
+                        row * unitMinimumSpace - halfHeight);
+
+                    selectedUnit[i].targetPos = targetPos + offset;
+                }
+            }
+        }
     }
 
     private void SelectUnitsInBox(Rect dragRect)
     {
         // TestManager에서 스폰된 유닛 리스트를 가져와 순회
-        
+        selectedUnit.Clear();
         foreach (var unit in testManager.SpawnPosList)
         {
             if (unit == null) continue;
 
-            // 3D 월드 좌표 -> 2D 화면 좌표 변환
             Vector3 screenPos = mainCamera.WorldToScreenPoint(unit.transform.position);
+            UnitMovement um = unit.GetComponent<UnitMovement>();
 
-            // 카메라 전방에 있고, 드래그 영역 박스 안에 포함되어 있는가?
             if (screenPos.z > 0 && dragRect.Contains(screenPos))
             {
-                unit.GetComponent<UnitMovement>().Selected();
+                selectedUnit.Add(um);
+                um.Selected();
             }
             else
             {
-                unit.GetComponent<UnitMovement>().DeSelected();
+                um.DeSelected();
             }
         }
         

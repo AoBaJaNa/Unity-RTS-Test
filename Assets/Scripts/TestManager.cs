@@ -1,9 +1,7 @@
-using NUnit.Framework;
 using System.Linq;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEditor;
-
 public class TestManager : MonoBehaviour
 {
     [Header("Spanw Setting")]
@@ -62,7 +60,7 @@ public class TestManager : MonoBehaviour
                     if(!able)
                     {
                         currentSearchRadius += minimumRadius;
-                        random = Random.insideUnitSphere * currentSearchRadius;
+                        random = Random.insideUnitCircle * currentSearchRadius;
                         unitPos = new Vector3(random.x, 1, random.y);
                     }
                 }
@@ -78,8 +76,10 @@ public class TestManager : MonoBehaviour
 
     public void ClearUnits()
     {
-        foreach (GameObject obj in SpawnPosList)
-            DestroyImmediate(obj);
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            Undo.DestroyObjectImmediate(transform.GetChild(i).gameObject);
+        }
 
         SpawnPosList.Clear();
         Debug.Log("[TestManager] 생성된 모든 유닛이 삭제되었습니다.");
