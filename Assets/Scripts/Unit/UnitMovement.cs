@@ -14,16 +14,11 @@ public class UnitMovement : MonoBehaviour
         renderer = GetComponent<Renderer>();
         MaterialPropertyBlock = new MaterialPropertyBlock();
     }
-    void Update()
-    {
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
-    }
 
     public void Selected()
     {
         SetColor(true);
         IsSelected = true;
-        Debug.Log($"º±≈√ µ : {gameObject.name}");
     }
     public void DeSelected()
     {

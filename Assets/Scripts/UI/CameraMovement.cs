@@ -7,6 +7,7 @@ public class CameraMovement : MonoBehaviour
     [Header("Camera Defaults")]
     public Vector3 cameraPosOffset = new Vector3(0,16,0);
     public Vector3 cameraRotationOffset = new Vector3(50,0,0);
+    public bool controlToggle = true;
 
     [Header("Edge Scroll Setting")]
     public float moveSpeed = 20f;
@@ -25,12 +26,21 @@ public class CameraMovement : MonoBehaviour
 
     private void Start()
     {
-        CameraInitialized();
     }
     private void Update()
     {
-        HandleEdgeScroll();
-        HandleZoom();
+        if(Keyboard.current.fKey.wasPressedThisFrame)
+            CameraInitialized();
+
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            controlToggle = !controlToggle;
+        }
+        if (controlToggle)
+        {
+            HandleEdgeScroll();
+            HandleZoom();
+        }
     }
     private void HandleEdgeScroll()
     {
