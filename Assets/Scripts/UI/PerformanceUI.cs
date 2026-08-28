@@ -17,7 +17,7 @@ public class PerformanceUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI statsText;
 
     [Header("Test Settings")]
-    [SerializeField] private int unitCount = 10000;
+    private int unitCount = 10000;
     [SerializeField] private TestMode currentMode = TestMode.MonoBehaviour;
     [SerializeField] private string testType = "Movement";
 

@@ -14,8 +14,10 @@ public class UnitSelectionManager : MonoBehaviour
     private List<UnitMovement> selectedUnit = new();
     Vector3 targetPos;
 
+    UnitMovementManager UnitMovementManager;
     private void Awake()
     {
+        UnitMovementManager = GetComponent<UnitMovementManager>();
         mainCamera = Camera.main;
         testManager = GetComponent<TestManager>();
     }
@@ -63,7 +65,7 @@ public class UnitSelectionManager : MonoBehaviour
                         0,
                         row * unitMinimumSpace - halfHeight);
 
-                    selectedUnit[i].targetPos = targetPos + offset;
+                    UnitMovementManager.SetTargetPos(selectedUnit[i].Index, targetPos + offset);
                 }
             }
         }

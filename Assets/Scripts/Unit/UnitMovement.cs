@@ -2,15 +2,13 @@ using UnityEngine;
 
 public class UnitMovement : MonoBehaviour
 {
-    public Vector3 targetPos;
-    public float moveSpeed = 5f;
+    public int Index { get; set; }
     MaterialPropertyBlock MaterialPropertyBlock;
     Renderer renderer;
     public bool IsSelected { get; private set; }
 
     private void Awake()
     {
-        targetPos = transform.position;
         renderer = GetComponent<Renderer>();
         MaterialPropertyBlock = new MaterialPropertyBlock();
     }
