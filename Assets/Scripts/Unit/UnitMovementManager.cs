@@ -5,6 +5,7 @@ using Unity.Mathematics;
 using System.Linq;
 using System;
 using Unity.Collections;
+using Unity.Jobs;
 
 public sealed class UnitNativeData : IDisposable
 {
@@ -72,15 +73,16 @@ public class UnitMovementManager : MonoBehaviour
     }
     void Update()
     {
+        UnitMoveJob unitMoveJob = new UnitMoveJob(unitNativeData.pos, unitNativeData.targetPos, unitNativeData.speed, Time.deltaTime);
+
+        JobHandle handle = unitMoveJob.Schedule(unitCount,64); //64∞≥∑Œ forπÆ π≠æÓº≠ ≈ı√¥
+
+        handle.Complete();
+
+
         for (int i = 0; i < unitCount; i++)
         {
-            float3 currentPos = unitNativeData.pos[i];
-            float3 target = unitNativeData.targetPos[i];
-            float speed = unitNativeData.speed[i];
-
-            currentPos = MoveToWards(currentPos, target, speed);
-            unitNativeData.pos[i] = currentPos;
-            unitsTransform[i].position = currentPos;
+            unitsTransform[i].position = unitNativeData.pos[i];
         }
     }
     private void OnDestroy()
