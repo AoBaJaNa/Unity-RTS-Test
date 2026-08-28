@@ -23,14 +23,13 @@ public class CameraMovement : MonoBehaviour
         transform.position = cameraPosOffset;
         transform.rotation = Quaternion.Euler(cameraRotationOffset);
     }
-
-    private void Start()
+    public void CameraInitialized(Vector3 pos)
     {
+        transform.position = pos;
+        transform.rotation = Quaternion.Euler(cameraRotationOffset);
     }
     private void Update()
     {
-        if(Keyboard.current.fKey.wasPressedThisFrame)
-            CameraInitialized();
 
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {

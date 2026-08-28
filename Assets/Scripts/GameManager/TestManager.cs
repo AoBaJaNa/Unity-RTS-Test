@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.InputSystem;
 using UnityEngine;
 
 public class TestManager : MonoBehaviour
@@ -9,7 +10,7 @@ public class TestManager : MonoBehaviour
     public int spawnCount = 10000;
     public float moveSpeed = 5f;
     public Transform spawnPoint;
-
+    public Transform goalT;
     [Tooltip("유닛 간의 최소 격자 간격")]
     public float unitSpacing = 1.5f;
 
@@ -18,13 +19,27 @@ public class TestManager : MonoBehaviour
 
     public List<GameObject> SpawnPosList { get; private set; } = new();
 
+    UnitSelectionManager unitSelectionManager;
+    CameraMovement cameraMovement;
     private void Awake()
     {
         SpawnPosList = GetComponentsInChildren<UnitMovement>(true)
             .Select(unit => unit.gameObject)
             .ToList();
     }
-
+    private void Start()
+    {
+        unitSelectionManager = FindFirstObjectByType<UnitSelectionManager>();
+        cameraMovement = FindFirstObjectByType<CameraMovement>();
+    }
+    private void Update()
+    {
+        if (Keyboard.current.fKey.wasPressedThisFrame)
+        {
+            cameraMovement.CameraInitialized(new Vector3(goalT.position.x,cameraMovement.cameraPosOffset.y, cameraMovement.cameraPosOffset.z));
+            unitSelectionManager.CalcTargetPos(goalT.position);
+        }
+    }
     public void SpawnUnit()
     {
         if (unitPrefab == null) return;

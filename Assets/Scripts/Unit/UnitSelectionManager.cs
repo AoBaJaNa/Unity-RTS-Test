@@ -46,28 +46,32 @@ public class UnitSelectionManager : MonoBehaviour
             // 2-A. 바닥 오브젝트에 Collider가 있는 경우 (Raycast 활용)
             if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, ground))
             {
-                targetPos = hit.point;
-                targetPos = new Vector3(targetPos.x, 1, targetPos.z);
-
-                int columns = Mathf.CeilToInt(Mathf.Sqrt(selectedUnit.Count));
-                int rows = Mathf.CeilToInt((float)selectedUnit.Count / columns);
-
-                float halfWidth = (columns - 1) * unitMinimumSpace * 0.5f;
-                float halfHeight = (rows - 1) * unitMinimumSpace * 0.5f;
-                
-                for (int i = 0; i < selectedUnit.Count; i++)
-                {
-                    int row = i / columns;
-                    int col = i % columns;
-
-                    Vector3 offset = new Vector3((
-                        col * unitMinimumSpace) - halfWidth,
-                        0,
-                        row * unitMinimumSpace - halfHeight);
-
-                    UnitMovementManager.SetTargetPos(selectedUnit[i].Index, targetPos + offset);
-                }
+                CalcTargetPos(hit.point);
             }
+        }
+    }
+    public void CalcTargetPos(Vector3 pos)
+    {
+        targetPos = pos;
+        targetPos = new Vector3(targetPos.x, 1, targetPos.z);
+
+        int columns = Mathf.CeilToInt(Mathf.Sqrt(selectedUnit.Count));
+        int rows = Mathf.CeilToInt((float)selectedUnit.Count / columns);
+
+        float halfWidth = (columns - 1) * unitMinimumSpace * 0.5f;
+        float halfHeight = (rows - 1) * unitMinimumSpace * 0.5f;
+
+        for (int i = 0; i < selectedUnit.Count; i++)
+        {
+            int row = i / columns;
+            int col = i % columns;
+
+            Vector3 offset = new Vector3((
+                col * unitMinimumSpace) - halfWidth,
+                0,
+                row * unitMinimumSpace - halfHeight);
+
+            UnitMovementManager.SetTargetPos(selectedUnit[i].Index, targetPos + offset);
         }
     }
 
